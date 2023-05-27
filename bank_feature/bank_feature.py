@@ -1,6 +1,6 @@
 import json, datetime
 
-with open('operations.json', 'r', encoding="utf-8") as file:
+with open('/home/course/course_27.05.23/bank_feature/operations.json', 'r', encoding="utf-8") as file:
     operations = json.load(file)
 
 
@@ -21,7 +21,7 @@ def get_from_payment_system(operation):
         for item in from_split:
             if item.isalpha:
                 payment_system.append(item)
-        return " ".join(payment_system)
+            return " ".join(payment_system)
     else:
         return ""
 
@@ -31,7 +31,9 @@ def get_from_card_number(operation):
         from_split = operation['from'].split(" ")
         for item in from_split:
             if item.isdigit():
-                return item[:6] + "" + "*" * 4 + "" + item[-4:]
+                num = item[:6] + "" + "*" * 4 + "" + item[-4:]
+                return ' '.join([num[i:i+4] for i in range(0, len(num), 4)])
+
     else:
         return ""
 
@@ -42,14 +44,15 @@ def get_to_payment_system(operation):
     for item in to_split:
         if item.isalpha:
             payment_system.append(item)
-    return " ".join(payment_system)
+        return " ".join(payment_system)
 
 
 def get_to_number(operation):
     to_split = operation["to"].split(" ")
     for item in to_split:
-        if item.isalpha():
-            return "*" * 2 + item[-4:]
+        if item.isdigit():
+            num = "*" * 2 + item[-4:]
+            return num
 
 
 def get_amount(operation):
@@ -63,7 +66,6 @@ def get_currency(operation):
 def get_last_five_operations(operations):
     return operations[-5:]
 
-
 def get_formatted_last_five_operations(operations):
     formatted_last_five_operations = []
     for operation in operations:
@@ -72,7 +74,6 @@ def get_formatted_last_five_operations(operations):
             f"{get_from_payment_system(operation)} {get_from_card_number(operation)} -> {get_to_payment_system(operation)} {get_to_number(operation)} \n"
             f"{get_amount(operation)} {get_currency(operation)}")
     return formatted_last_five_operations
-
 
 for operation in get_formatted_last_five_operations(get_last_five_operations(operations)):
     print("_" * 50 + "\n" + operation + "\n")
